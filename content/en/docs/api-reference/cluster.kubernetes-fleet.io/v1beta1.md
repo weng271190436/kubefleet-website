@@ -1,8 +1,13 @@
 ---
-title: API Reference
-description: v1beta1 Reference for cluster.kubernetes-fleet.io KubeFleet APIs
-weight: 10
+title: cluster.kubernetes-fleet.io/v1beta1
+description: API reference for cluster.kubernetes-fleet.io/v1beta1
+weight: 2
 ---
+
+# API Reference
+
+## Packages
+- [cluster.kubernetes-fleet.io/v1beta1](#clusterkubernetes-fleetiov1beta1)
 
 
 ## cluster.kubernetes-fleet.io/v1beta1

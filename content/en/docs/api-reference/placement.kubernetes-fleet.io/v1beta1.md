@@ -1,8 +1,13 @@
 ---
-title: API Reference
-description: v1beta1 Reference for placement.kubernetes-fleet.io KubeFleet APIs
-weight: 2
+title: placement.kubernetes-fleet.io/v1beta1
+description: API reference for placement.kubernetes-fleet.io/v1beta1
+weight: 4
 ---
+
+# API Reference
+
+## Packages
+- [placement.kubernetes-fleet.io/v1beta1](#placementkubernetes-fleetiov1beta1)
 
 
 ## placement.kubernetes-fleet.io/v1beta1
@@ -803,7 +808,7 @@ _Appears in:_
 | `apiVersion` _string_ | `placement.kubernetes-fleet.io/v1beta1` | | |
 | `kind` _string_ | `ClusterStagedUpdateRun` | | |
 | `metadata` _[ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `spec` _[UpdateRunSpec](#updaterunspec)_ | The desired state of ClusterStagedUpdateRun. The spec is immutable. |  | Required: \{\} <br /> |
+| `spec` _[UpdateRunSpec](#updaterunspec)_ | The desired state of ClusterStagedUpdateRun. |  | Required: \{\} <br /> |
 | `status` _[UpdateRunStatus](#updaterunstatus)_ | The observed status of ClusterStagedUpdateRun. |  | Optional: \{\} <br /> |
 
 
@@ -2226,7 +2231,7 @@ _Appears in:_
 | `apiVersion` _string_ | `placement.kubernetes-fleet.io/v1beta1` | | |
 | `kind` _string_ | `StagedUpdateRun` | | |
 | `metadata` _[ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#objectmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
-| `spec` _[UpdateRunSpec](#updaterunspec)_ | The desired state of StagedUpdateRun. The spec is immutable. |  | Required: \{\} <br /> |
+| `spec` _[UpdateRunSpec](#updaterunspec)_ | The desired state of StagedUpdateRun. |  | Required: \{\} <br /> |
 | `status` _[UpdateRunStatus](#updaterunstatus)_ | The observed status of StagedUpdateRun. |  | Optional: \{\} <br /> |
 
 
@@ -2254,6 +2259,25 @@ _Appears in:_
 | `spec` _[UpdateStrategySpec](#updatestrategyspec)_ | The desired state of StagedUpdateStrategy. |  | Required: \{\} <br /> |
 
 
+
+
+#### State
+
+_Underlying type:_ _string_
+
+State represents the desired state of an update run.
+
+
+
+_Appears in:_
+- [UpdateRunSpec](#updaterunspec)
+
+| Field | Description |
+| --- | --- |
+| `NotStarted` | StateNotStarted describes user intent to initialize but not execute the update run.<br />This is the default state when an update run is created.<br /> |
+| `Started` | StateStarted describes user intent to execute (or resume execution if paused).<br />Users can subsequently set the state to Stopped or Abandoned.<br /> |
+| `Stopped` | StateStopped describes user intent to pause the update run.<br />Users can subsequently set the state to Started or Abandoned.<br /> |
+| `Abandoned` | StateAbandoned describes user intent to abandon the update run.<br />This is a terminal state; once set, it cannot be changed.<br /> |
 
 
 #### StatusReportingScope
@@ -2354,6 +2378,7 @@ _Appears in:_
 | `placementName` _string_ | PlacementName is the name of placement that this update run is applied to.<br />There can be multiple active update runs for each placement, but<br />it's up to the DevOps team to ensure they don't conflict with each other. |  | MaxLength: 255 <br />Required: \{\} <br /> |
 | `resourceSnapshotIndex` _string_ | The resource snapshot index of the selected resources to be updated across clusters.<br />The index represents a group of resource snapshots that includes all the resources a ResourcePlacement selected. |  | Required: \{\} <br /> |
 | `stagedRolloutStrategyName` _string_ | The name of the update strategy that specifies the stages and the sequence<br />in which the selected resources will be updated on the member clusters. The stages<br />are computed according to the referenced strategy when the update run starts<br />and recorded in the status field. |  | Required: \{\} <br /> |
+| `state` _[State](#state)_ | State indicates the desired state of the update run.<br />NotStarted: The update run is initialized but execution has not started (default).<br />Started: The update run should execute or resume execution.<br />Stopped: The update run should pause execution.<br />Abandoned: The update run should be abandoned and terminated. | NotStarted | Enum: [NotStarted Started Stopped Abandoned] <br />Optional: \{\} <br /> |
 
 
 
