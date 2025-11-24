@@ -41,7 +41,7 @@ apply strategy in use is of the type `ClientSideApply` (default) or `ServerSideA
    - If this condition is false, refer to [Availability Failure TSG](PlacementAvailable)
 7. `ClusterResourcePlacementDiffreported`: Indicates whether diff reporting has completed on all resources. This condition
 will only be populated if the apply strategy in use is of the type `ReportDiff`.
-   - If this condition is false, refer to the [CRP Diff Reporting Failure TSG](ClusterResourcePlacementDiffReported) for more information.
+   - If this condition is false, refer to the [Diff Reporting Failure TSG](PlacementDiffReported) for more information.
 
 ## How can I debug if some clusters are not selected as expected?
 

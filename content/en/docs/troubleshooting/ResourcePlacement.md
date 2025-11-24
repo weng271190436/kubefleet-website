@@ -73,7 +73,7 @@ apply strategy in use is of the type `ClientSideApply` (default) or `ServerSideA
    - If this condition is false, refer to [Availability Failure TSG](PlacementAvailable.md).
 7. `ResourcePlacementDiffreported`: Indicates whether diff reporting has completed on all resources. This condition
 will only be populated if the apply strategy in use is of the type `ReportDiff`.
-   - If this condition is false, refer to the [CRP Diff Reporting Failure TSG](ClusterResourcePlacementDiffReported.md) for more information.
+   - If this condition is false, refer to the [Diff Reporting Failure TSG](PlacementDiffReported.md) for more information.
 
 > **Note**: ResourcePlacement and ClusterResourcePlacement share the same underlying architecture with a 1-to-1 mapping of condition types. 
 > The condition types follow a naming convention where RP conditions use the `ResourcePlacement` prefix while CRP conditions use the 
