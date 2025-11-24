@@ -28,7 +28,7 @@ The complete progression of `ClusterResourcePlacement` is as follows:
    - If this condition is false, refer to [Scheduling Failure TSG](PlacementScheduled). 
 2. `ClusterResourcePlacementRolloutStarted`: Indicates the rollout process has begun.
    - If this condition is false refer to [Rollout Failure TSG](PlacementRolloutStarted)
-   - If you are triggering a rollout with a staged update run, refer to [ClusterStagedUpdateRun TSG](ClusterStagedUpdateRun).
+   - If you are triggering a rollout with a staged update run, refer to [StagedUpdateRun TSG](StagedUpdateRun).
 3. `ClusterResourcePlacementOverridden`: Indicates the resource has been overridden.
    - If this condition is false, refer to [Override Failure TSG](PlacementOverridden)
 4. `ClusterResourcePlacementWorkSynchronized`: Indicates the work objects have been synchronized.
