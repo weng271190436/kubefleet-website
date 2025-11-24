@@ -1,10 +1,10 @@
 ---
-title: CRP Work-Synchronization Failure TSG
-description: Troubleshooting guide for CRP status "ClusterResourcePlacementWorkSynchronized" condition set to false
+title: Work Synchronization Failure TSG
+description: Troubleshooting guide for "WorkSynchronized" condition set to false (ClusterResourcePlacementWorkSynchronized / ResourcePlacementWorkSynchronized)
 weight: 5
 ---
 
-The `ClusterResourcePlacementWorkSynchronized` condition is false when the CRP has been recently updated but the associated work objects have not yet been synchronized with the changes.
+The `ClusterResourcePlacementWorkSynchronized` (CRP) or `ResourcePlacementWorkSynchronized` (RP) condition is `False` when the placement has been recently updated but the associated Work objects have not yet been synchronized with the latest selected resources.
 > Note: In addition, it may be helpful to look into the logs for the [work generator controller](https://github.com/kubefleet-dev/kubefleet/blob/main/pkg/controllers/workgenerator/controller.go) to get more information on why the work synchronization failed.
 
 ## Common Scenarios
@@ -13,9 +13,9 @@ Instances where this condition may arise:
 - The enveloped object is not well formatted.
 
 ### Case Study
-The CRP is attempting to propagate a resource to a selected cluster, but the work object has not been updated to reflect the latest changes due to the selected cluster has been terminated.
+Example: A placement attempts to propagate resources to a selected cluster, but the Work object cannot update because the member cluster namespace is terminating.
 
-### ClusterResourcePlacement Spec
+### ClusterResourcePlacement Spec (same pattern applies to ResourcePlacement with namespace-scoped resources)
 ```
 spec:
   resourceSelectors:
@@ -30,7 +30,7 @@ spec:
     type: RollingUpdate
  ```
 
-### ClusterResourcePlacement Status
+### ClusterResourcePlacement Status (Representative Example)
 ```
 spec:
   policy:
@@ -108,13 +108,14 @@ status:
     name: test-ns
     version: v1
 ```
-In the `ClusterResourcePlacement` status, the `ClusterResourcePlacementWorkSynchronized` condition status shows as `False`. 
-The message for it indicates that the work object `crp1-work` is prohibited from generating new content within the namespace `fleet-member-kind-cluster-1` because it's currently terminating.
+The status shows `WorkSynchronized` `False` because the Work object cannot create new content while the namespace is terminating.
 
 ### Resolution
-To address the issue at hand, there are several potential solutions:
-- Modify the `ClusterResourcePlacement` with a newly selected cluster. 
-- Delete the `ClusterResourcePlacement` to remove work through garbage collection.
-- Rejoin the member cluster. The namespace can only be regenerated after rejoining the cluster.
+Potential actions:
+- Select a different (healthy) cluster or remove the failing one from the policy.
+- Delete the placement to allow garbage collection of associated Work objects.
+- Rejoin the member cluster so its namespace can be recreated and Work can synchronize.
+- Wait briefly: transient sync failures (API server unavailability, temporary RBAC errors) often resolve automatically.
 
-In other situations, you might opt to wait for the work to finish propagating.
+## General Notes
+For ResourcePlacement the investigation is identical—inspect `.status.placementStatuses[*].conditions` for `WorkSynchronized` and check the associated Work in the `fleet-member-{clusterName}` namespace.
