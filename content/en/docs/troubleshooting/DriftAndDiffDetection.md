@@ -1,11 +1,11 @@
 ---
-title: CRP Drift Detection and Configuration Difference Check Unexpected Result TSG
-description: Troubleshoot situations where CRP drift detection and configuration difference check features are returning unexpected results
+title: Drift Detection and Configuration Difference Check Unexpected Result TSG
+description: Troubleshoot situations where drift detection and configuration difference check features are returning unexpected results for ResourcePlacement and ClusterResourcePlacement
 weight: 8
 ---
 
 This document helps you troubleshoot unexpected drift and configuration difference
-detection results when using the KubeFleet CRP API.
+detection results when using the KubeFleet ResourcePlacement (RP) and ClusterResourcePlacement (CRP) APIs.
 
 > Note
 >
@@ -19,15 +19,15 @@ detection results when using the KubeFleet CRP API.
 > This document focuses on unexpected drift and configuration difference detection
 > results. If you have encountered drift and configuration difference detection
 > failures (e.g., no detection results at all with the `ClusterResourcePlacementApplied`
-> condition being set to `False` with a detection related error), see the 
+> or `ResourcePlacementApplied` condition being set to `False` with a detection related error), see the 
 > [Work-Application Failure TSG](PlacementApplied) instead.
 
 ## Common scenarios
 
 A drift occurs when a non-KubeFleet agent modifies a KubeFleet-managed resource (i.e., 
-a resource that has been applied by KubeFleet). Drift details are reported in the CRP status
+a resource that has been applied by KubeFleet). Drift details are reported in the placement status
 on a per-cluster basis (`.status.placementStatuses[*].driftedPlacements` field).
-Drift detection is always on when your CRP uses a `ClientSideApply` (default) or
+Drift detection is always on when your ResourcePlacement or ClusterResourcePlacement uses a `ClientSideApply` (default) or
 `ServerSideApply` typed apply strategy, however, note the following limitations:
 
 * When you set the `comparisonOption` setting (`.spec.strategy.applyStrategy.comparisonOption` field)
@@ -45,7 +45,7 @@ to `Always` and the `comparisonOption` setting (`.spec.strategy.applyStrategy.co
 to `partialComparison`, no drifts will ever be found, as apply ops from KubeFleet will
 overwrite any drift in managed fields, and drifts in unmanaged fields are always ignored.
 * Drift detection does not apply to resources that are not yet managed by KubeFleet. If a resource has
-not been created on the hub cluster or has not been selected by the CRP API, there will not be any drift
+not been created on the hub cluster or has not been selected by the placement API, there will not be any drift
 reportings about it, even if the resource live within a KubeFleet managed namespace. Similarly, if KubeFleet
 has been blocked from taking over a pre-existing resource due to your takeover setting
 (`.spec.strategy.applyStrategy.whenToTakeOver` field), no drift detection will run on the resource.
@@ -55,16 +55,16 @@ deletion.
 * Drift detection will not block resource rollouts. If you have just updated the resources on
 the hub cluster side and triggered a rollout, drifts on the member cluster side might have been 
 overwritten.
-* When a rollout is in progress, drifts will not be reported on the CRP status for a member cluster if
+* When a rollout is in progress, drifts will not be reported on the placement status for a member cluster if
 the cluster has not received the latest round of updates.
 
 KubeFleet will check for configuration differences under the following two conditions:
 
 * When KubeFleet encounters a pre-existing resource, and the `whenToTakeOver` setting
 (`.spec.strategy.applyStrategy.whenToTakeOver` field) is set to `IfNoDiff`.
-* When the CRP uses an apply strategy of the `ReportDiff` type.
+* When the placement uses an apply strategy of the `ReportDiff` type.
 
-Configuration difference details are reported in the CRP status
+Configuration difference details are reported in the placement status
 on a per-cluster basis (`.status.placementStatuses[*].diffedPlacements` field). Note that the
 following limitations apply:
 
@@ -85,20 +85,20 @@ managed by KubeFleet will also be checked.
 * Configuration differences will not block resource rollouts. If you have just updated the resources on
 the hub cluster side and triggered a rollout, configuration difference check will be re-run based on the
 newer versions of resources.
-* When a rollout is in progress, configuration differences will not be reported on the CRP status
+* When a rollout is in progress, configuration differences will not be reported on the placement status
 for a member cluster if the cluster has not received the latest round of updates.
 
 Note also that drift detection and configuration difference check in KubeFleet run periodically.
-The reportings in the CRP status might not be up-to-date.
+The reportings in the placement status might not be up-to-date.
 
 ## Investigation steps
 
 If you find an unexpected drift detection or configuration difference check result on a member cluster,
 follow the steps below for investigation:
 
-* Double-check the apply strategy of your CRP; confirm that your settings allows proper drift detection
+* Double-check the apply strategy of your placement; confirm that your settings allows proper drift detection
 and/or configuration difference check reportings.
-* Verify that rollout has completed on all member clusters; see the [CRP Rollout Failure TSG](ClusterResourcePlacementRolloutStarted)
+* Verify that rollout has completed on all member clusters; see the [Rollout Failure TSG](PlacementRolloutStarted)
 for more information.
 * Log onto your member cluster and retrieve the resources with unexpected reportings.
     * Check if its generation (`.metadata.generation` field) matches with the `observedInMemberClusterGeneration` value
